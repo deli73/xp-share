@@ -13,6 +13,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,32 +97,36 @@ public class XpShare implements ModInitializer {
             int levelsGive;
             int pointsGive;
             int leftoverPoints = (int) (giver.experienceProgress * giver.getNextLevelExperience());
-            int pointsHave = levelRangeAsPoints(0, giver.experienceLevel) + leftoverPoints;
-            TranslatableText message;
+            int pointsHave = levelRangeAsPoints(0, giver.experienceLevel) + leftoverPoints; //totalExperience isn't updated fsr, fml
+            Text feedback;
+            Text message;
             switch (type){
-                case LEVELS_GIVE -> {
+                case LEVELS_GIVE -> { //give the xp required to remove some number of levels *from the giver*
                     levelsGive = context.getArgument("levels", Integer.class);
                     int levelsHave = giver.experienceLevel;
                     pointsGive = levelRangeAsPoints(levelsHave-levelsGive, levelsHave);
-                    message = new TranslatableText("commands.xpshare.xpshare.levels_given", levelsGive, reciever.getName(), pointsGive);
+                    feedback = new LiteralText("Given "+levelsGive+" of your levels to "+reciever.getDisplayName()+" ("+pointsGive+" points)");
+                    message = new LiteralText("Recieved xp from "+giver.getDisplayName()); //todo: tell the level amount recieved??
                 }
-                case LEVELS_RECIEVE -> {
+                case LEVELS_RECIEVE -> { //give the xp requried to add some number of levels *to the reciever*
                     levelsGive = context.getArgument("levels", Integer.class);
                     int targetLevelsHave = reciever.experienceLevel;
                     pointsGive = levelRangeAsPoints(targetLevelsHave, targetLevelsHave+levelsGive);
-                    message = new TranslatableText("commands.xpshare.xpshare.levels_recieved", reciever.getName(), levelsGive, pointsGive);
+                    feedback = new LiteralText("Shared xp to "+reciever.getDisplayName()+" to increase their levels by "+levelsGive+" ("+pointsGive+" points)");
+                    message = new LiteralText("Recieved "+levelsGive+" levels from "+giver.getDisplayName());
                 }
-                default -> {
+                default -> { //just put in point values directly
                     pointsGive = context.getArgument("points", Integer.class);
-                    message = new TranslatableText("commands.xpshare.xpshare.points", pointsGive, reciever.getName());
+                    feedback = new LiteralText("Given "+pointsGive+" experience points to "+reciever.getDisplayName());
+                    message = new LiteralText("Recieved "+pointsGive+" experience points from "+giver.getDisplayName());
                 }
             }
 
             if(pointsHave >= pointsGive) {
                 giver.addExperience(-pointsGive);
                 reciever.addExperience(pointsGive);
-                src.sendFeedback(message, true);
-                //todo: also add feedback to xp reciever
+                src.sendFeedback(feedback, true);
+                reciever.sendSystemMessage(message, giver.getUuid());
                 return 1;
             }
         }
