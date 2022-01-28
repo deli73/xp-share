@@ -23,8 +23,8 @@ public class XpShare implements ModInitializer {
     public static final String MODID = "xpshare";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-    public static final String LV_GIVEN = "levels-given";
-    public static final String LV_RECIEVED = "levels-recieved";
+    public static final String LV_GIVEN = "my-levels";
+    public static final String LV_RECIEVED = "levels";
 
     @Override
     public void onInitialize() {
