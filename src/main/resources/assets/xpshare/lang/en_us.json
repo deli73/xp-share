@@ -1,3 +1,5 @@
 {
-
+  "commands.xpshare.xpshare.levels_given": "Given %1$s of your levels to %2$s (%3$s points)",
+  "commands.xpshare.xpshare.levels_recieved": "Given levels to %1$s to increase their levels by %2$s (%3$s points)",
+  "commands.xpshare.xpshare.points": "Given %1$s experience points to %2$s"
 }

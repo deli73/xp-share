@@ -94,27 +94,33 @@ public class XpShare implements ModInitializer {
             ServerPlayerEntity reciever = context.getArgument("player", EntitySelector.class).getPlayer(src);
             int levelsGive;
             int pointsGive;
-            int pointsHave = giver.totalExperience;
+            int leftoverPoints = (int) (giver.experienceProgress * giver.getNextLevelExperience());
+            int pointsHave = levelRangeAsPoints(0, giver.experienceLevel) + leftoverPoints;
             TranslatableText message;
             switch (type){
                 case LEVELS_GIVE -> {
                     levelsGive = context.getArgument("levels", Integer.class);
                     int levelsHave = giver.experienceLevel;
                     pointsGive = levelRangeAsPoints(levelsHave-levelsGive, levelsHave);
+                    message = new TranslatableText("commands.xpshare.xpshare.levels_given", levelsGive, reciever.getName(), pointsGive);
                 }
                 case LEVELS_RECIEVE -> {
                     levelsGive = context.getArgument("levels", Integer.class);
                     int targetLevelsHave = reciever.experienceLevel;
                     pointsGive = levelRangeAsPoints(targetLevelsHave, targetLevelsHave+levelsGive);
+                    message = new TranslatableText("commands.xpshare.xpshare.levels_recieved", reciever.getName(), levelsGive, pointsGive);
                 }
                 default -> {
                     pointsGive = context.getArgument("points", Integer.class);
+                    message = new TranslatableText("commands.xpshare.xpshare.points", pointsGive, reciever.getName());
                 }
             }
 
             if(pointsHave >= pointsGive) {
                 giver.addExperience(-pointsGive);
                 reciever.addExperience(pointsGive);
+                src.sendFeedback(message, true);
+                //todo: also add feedback to xp reciever
                 return 1;
             }
         }
