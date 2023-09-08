@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "xpshare",
-  "version": "${version}",
+  "version": "1.2.0-linear",
 
   "name": "Xp Share",
   "description": "This is an example description! Tell everyone what your mod is about!",
@@ -29,10 +29,10 @@
   "depends": {
     "fabricloader": ">=0.12.12",
     "fabric": "*",
-    "minecraft": "1.18.x",
+    "minecraft": "1.19.4",
     "java": ">=17"
   },
   "suggests": {
-    "another-mod": "*"
+    "another-mod": "linearxp"
   }
 }

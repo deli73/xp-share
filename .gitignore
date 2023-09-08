@@ -31,3 +31,5 @@ bin/
 # fabric
 
 run/
+/run2/
+/run3/
